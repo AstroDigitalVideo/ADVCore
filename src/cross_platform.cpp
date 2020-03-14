@@ -55,6 +55,8 @@ void advfgetpos64(FILE* file, __int64* pos)
 	int rv = fgetpos(file, reinterpret_cast<fpos_t*>(pos));
 #elif __linux__
 	int rv = fgetpos64(file, reinterpret_cast<fpos64_t*>(pos));
+#elif __APPLE__
+    int rv = fgetpos(file, reinterpret_cast<fpos_t*>(pos));    
 #else
 	#error Platform not supported
 #endif

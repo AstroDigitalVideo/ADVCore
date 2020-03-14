@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="AdvLib.Core.GNU" Database="./AdvLib.Core.GNU.tags">
+<CodeLite_Workspace Name="AdvLib.Core.GNU" Database="./AdvLib.Core.GNU.tags" Version="10000">
   <Project Name="AdvLib" Path="AdvLib.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
@@ -10,13 +10,21 @@
       <Environment/>
       <Project Name="AdvLib" ConfigName="Release_Win32"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Environment/>
       <Project Name="AdvLib" ConfigName="Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release_Win64" Selected="no">
       <Environment/>
       <Project Name="AdvLib" ConfigName="Release_Win64"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release_MacOS" Selected="yes">
+      <Environment/>
+      <Project Name="AdvLib" ConfigName="Release_MacOS"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Debug_MacOS" Selected="no">
+      <Environment/>
+      <Project Name="AdvLib" ConfigName="Debug_MacOS"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

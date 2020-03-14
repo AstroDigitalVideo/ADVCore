@@ -55,6 +55,12 @@ typedef struct tagBITMAPFILEHEADER {
 #include <time.h>
 #endif
 
+#if __APPLE__
+#ifndef _SIZE_T_DEFINED
+#define _SIZE_T_DEFINED
+#endif
+#endif
+
 #if __GNUC__
 #define strcpy_s(x, y, z) strcpy(x, z)
 #define strncpy_s(x, y, z, t) strcpy(x, z)

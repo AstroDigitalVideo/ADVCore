@@ -700,7 +700,7 @@ ADVRESULT Adv2File::BeginFrame(unsigned char streamId, __int64 startFrameTicks, 
 	{
 		int imageBufferSize = 0;
 		ADVRESULT rv = ImageSection->MaxFrameBufferSize(&imageBufferSize);
-		if (!SUCCEEDED(rv))
+		if (rv != S_OK)
 			return rv;
 
 		int maxUncompressedBufferSize = 
@@ -931,7 +931,7 @@ ADVRESULT Adv2File::GetFrameImageSectionHeader(int streamId, int frameId, unsign
 	{
 		advfsetpos64(m_Adv2File, &indexEntry->FrameOffset);
 
-		long frameDataMagic;
+		int frameDataMagic;
 		fread(&frameDataMagic, 4, 1, m_Adv2File);
 
 		if (frameDataMagic == 0xEE0122FF)
@@ -974,7 +974,7 @@ ADVRESULT Adv2File::GetFrameSectionData(int streamId, int frameId, unsigned int*
 	{
 		advfsetpos64(m_Adv2File, &indexEntry->FrameOffset);
 
-		long frameDataMagic;
+		int frameDataMagic;
 		fread(&frameDataMagic, 4, 1, m_Adv2File);
 
 		if (frameDataMagic == 0xEE0122FF)

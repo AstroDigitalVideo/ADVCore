@@ -425,7 +425,7 @@ unsigned char* AdvImageLayout::GetFullImageDiffCorrWithSignsDataBytes(unsigned s
 		GetDataBytes12Bpp(currFramePixels, mode, pixelsCrc, bytesCount, dataPixelsBpp);
 		return m_PixelArrayBuffer;
 	}
-	else if (Bpp = 16)
+	else if (Bpp == 16)
 	{
 		GetDataBytes16Bpp(currFramePixels, mode, pixelsCrc, bytesCount, dataPixelsBpp);
 		return m_PixelArrayBuffer;
@@ -477,9 +477,9 @@ void AdvImageLayout::GetDataBytes12BppIndex12BppWords(unsigned short* pixels, en
         // | aaaa aabb bbbb cccc | ccdd dddd eeee eeff | ffff gggg gghh hhhh |
 		//       encoded1               encoded2             encoded3
 		
-		unsigned int encodedPixelWord1 = ((word1 << 4) && 0xFFF00000) + ((word1 << 8) && 0x000FFF00) + (word2 >> 20);
-		unsigned int encodedPixelWord2 = ((word2 << 12) && 0xF0000000) + (word2 << 16) + ((word3 >> 12) && 0x0000FFF0)+ ((word3 >> 8) && 0x0000000F);
-		unsigned int encodedPixelWord3 = (word4 << 24) + ((word4 >> 4) && 0x00FFF000) + (word4 && 0x00000FFF);
+		unsigned int encodedPixelWord1 = ((word1 << 4) & 0xFFF00000) + ((word1 << 8) & 0x000FFF00) + (word2 >> 20);
+		unsigned int encodedPixelWord2 = ((word2 << 12) & 0xF0000000) + (word2 << 16) + ((word3 >> 12) & 0x0000FFF0)+ ((word3 >> 8) & 0x0000000F);
+		unsigned int encodedPixelWord3 = (word4 << 24) + ((word4 >> 4) & 0x00FFF000) + (word4 & 0x00000FFF);
 		
 		*pPixelArrayWords = encodedPixelWord1;pPixelArrayWords++;
 		*pPixelArrayWords = encodedPixelWord2;pPixelArrayWords++;
@@ -535,9 +535,9 @@ void AdvImageLayout::GetDataBytes12BppIndex16BppWords(unsigned short* pixels, en
         // | aaaa aabb bbbb cccc | ccdd dddd eeee eeff | ffff gggg gghh hhhh |
 		//       encoded1               encoded2             encoded3
 		
-		unsigned int encodedPixelWord1 = ((word1 << 4) && 0xFFF00000) + ((word1 << 8) && 0x000FFF00) + (word2 >> 20);
-		unsigned int encodedPixelWord2 = ((word2 << 12) && 0xF0000000) + (word2 << 16) + ((word3 >> 12) && 0x0000FFF0)+ ((word3 >> 8) && 0x0000000F);
-		unsigned int encodedPixelWord3 = (word4 << 24) + ((word4 >> 4) && 0x00FFF000) + (word4 && 0x00000FFF);
+		unsigned int encodedPixelWord1 = ((word1 << 4) & 0xFFF00000) + ((word1 << 8) & 0x000FFF00) + (word2 >> 20);
+		unsigned int encodedPixelWord2 = ((word2 << 12) & 0xF0000000) + (word2 << 16) + ((word3 >> 12) & 0x0000FFF0)+ ((word3 >> 8) & 0x0000000F);
+		unsigned int encodedPixelWord3 = (word4 << 24) + ((word4 >> 4) & 0x00FFF000) + (word4 & 0x00000FFF);
 		
 		*pPixelArrayWords = encodedPixelWord1;pPixelArrayWords++;
 		*pPixelArrayWords = encodedPixelWord2;pPixelArrayWords++;
