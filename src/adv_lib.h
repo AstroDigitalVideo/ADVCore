@@ -14,7 +14,7 @@ extern AdvLib::AdvFile* g_AdvFile;
 extern AdvLib2::Adv2File* g_Adv2File;
 extern bool g_FileStarted;
 
-#define CORE_VERSION "2.1c"
+#define CORE_VERSION "2.1d"
 
 #ifdef __cplusplus
 extern "C"
@@ -72,6 +72,7 @@ DLL_PUBLIC ADVRESULT AdvVer2_FrameAddStatusTag64(unsigned int tagIndex, __int64 
 DLL_PUBLIC ADVRESULT AdvVer2_EndFrame();
 
 DLL_PUBLIC ADVRESULT AdvVer2_GetFramePixels(int streamId, int frameNo, unsigned int* pixels, AdvLib2::AdvFrameInfo* frameInfo, int* systemErrorLen);
+DLL_PUBLIC ADVRESULT AdvVer2_GetStackedFramePixels(int streamId, int frameNo, int framesToStack, bool isSlidingIntegration, unsigned int* pixels, AdvLib2::AdvFrameInfo* frameInfo);
 DLL_PUBLIC ADVRESULT AdvVer2_GetTagPairSizes(TagPairType tagPairType, int tagId, int* tagNameSize, int* tagValueSize);
 DLL_PUBLIC ADVRESULT AdvVer2_GetTagPairValues(TagPairType tagPairType, int tagId, char* tagName, char* tagValue);
 DLL_PUBLIC ADVRESULT AdvVer2_GetImageLayoutInfo(int layoutIndex, AdvLib2::AdvImageLayoutInfo* imageLayoutInfo);

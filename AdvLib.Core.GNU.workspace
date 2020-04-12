@@ -3,27 +3,21 @@
   <Project Name="AdvLib" Path="AdvLib.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
-      <Environment/>
       <Project Name="AdvLib" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release_Win32" Selected="no">
-      <Environment/>
       <Project Name="AdvLib" ConfigName="Release_Win32"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="no">
-      <Environment/>
       <Project Name="AdvLib" ConfigName="Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release_Win64" Selected="no">
-      <Environment/>
+    <WorkspaceConfiguration Name="Release_Win64" Selected="yes">
       <Project Name="AdvLib" ConfigName="Release_Win64"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release_MacOS" Selected="yes">
-      <Environment/>
+    <WorkspaceConfiguration Name="Release_MacOS" Selected="no">
       <Project Name="AdvLib" ConfigName="Release_MacOS"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Debug_MacOS" Selected="no">
-      <Environment/>
       <Project Name="AdvLib" ConfigName="Debug_MacOS"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

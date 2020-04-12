@@ -813,19 +813,128 @@ ADVRESULT AdvVer2_GetFramePixels(int streamId, int frameNo, unsigned int* pixels
 	if (streamId > 0 && frameNo >= g_Adv2File->TotalNumberOfCalibrationFrames)
 		return E_FAIL;
 
-        unsigned char layoutId;
-        enum GetByteMode byteMode;
+    unsigned char layoutId;
+    enum GetByteMode byteMode;
 
-        ADVRESULT rv = g_Adv2File->GetFrameImageSectionHeader(streamId, frameNo, &layoutId, &byteMode);
+    ADVRESULT rv = g_Adv2File->GetFrameImageSectionHeader(streamId, frameNo, &layoutId, &byteMode);
+	if (rv != S_OK) 
+		return rv;
+
+	AdvLib2::Adv2ImageLayout* layout;
+	rv = g_Adv2File->ImageSection->GetImageLayoutById(layoutId, &layout);
+	if (rv != S_OK) 
+		return rv;
+
+    return g_Adv2File->GetFrameSectionData(streamId, frameNo, pixels, frameInfo, systemErrorLen);
+}
+
+ADVRESULT AdvVer2_GetStackedFramePixels(int streamId, int frameNo, int framesToStack, bool isSlidingIntegration, unsigned int* pixels, AdvLib2::AdvFrameInfo* frameInfo)
+{
+	if (g_Adv2File == nullptr)
+		return E_ADV_NOFILE;
+
+	if (g_Adv2File->ImageSection == nullptr)
+		return E_ADV_IMAGE_SECTION_UNDEFINED;
+
+	int startFrameNo = isSlidingIntegration ? frameNo - framesToStack / 2 : frameNo;
+	if (startFrameNo < 0) startFrameNo = 0;
+	int endFrameNo = startFrameNo + framesToStack - 1;
+	
+	if (streamId == 0)
+	{
+		if (frameNo >= g_Adv2File->TotalNumberOfMainFrames)
+			return E_FAIL;
+		else
+			endFrameNo = min(endFrameNo, g_Adv2File->TotalNumberOfMainFrames - 1);
+	}
+	else if (streamId > 0)
+	{
+		if (frameNo >= g_Adv2File->TotalNumberOfCalibrationFrames)
+			return E_FAIL;
+		else
+			endFrameNo = min(endFrameNo, g_Adv2File->TotalNumberOfCalibrationFrames - 1);
+	}
+	else
+	{
+		return E_FAIL;
+	}
+
+	AdvLib2::AdvFrameInfo frameInfoNext;
+	int systemErrorLen;
+	int pixelCount = g_Adv2File->ImageSection->Width * g_Adv2File->ImageSection->Height;
+
+	double* stackedPixels = (double*)malloc(pixelCount * sizeof(double));
+	ADVRESULT rv = S_OK;
+
+	for (int i = 0; i < pixelCount; i++)
+	{
+		stackedPixels[i] = 0;
+	}
+
+	int stackedFrames = 0;
+	unsigned int totalNextExposures = 0;
+	for (int i = startFrameNo; i <= endFrameNo; i++)
+	{
+		unsigned char layoutId;
+		enum GetByteMode byteMode;
+
+		rv = g_Adv2File->GetFrameImageSectionHeader(streamId, i, &layoutId, &byteMode);
 		if (rv != S_OK) 
-			return rv;
+			break;
 
 		AdvLib2::Adv2ImageLayout* layout;
 		rv = g_Adv2File->ImageSection->GetImageLayoutById(layoutId, &layout);
 		if (rv != S_OK) 
-			return rv;
+			break;
 
-        return g_Adv2File->GetFrameSectionData(streamId, frameNo, pixels, frameInfo, systemErrorLen);
+		if (i == frameNo)
+			rv = g_Adv2File->GetFrameSectionData(streamId, i, pixels, frameInfo, &systemErrorLen);
+		else
+		{
+			rv = g_Adv2File->GetFrameSectionData(streamId, i, pixels, &frameInfoNext, &systemErrorLen);
+			totalNextExposures += frameInfoNext.Exposure;
+		}
+
+		if (rv != S_OK) 
+			break;
+
+		for (int i = 0; i < pixelCount; i++)
+		{
+			stackedPixels[i] += pixels[i];
+		}
+		stackedFrames++;
+	}
+
+	if (stackedFrames > 0)
+	{
+		for (int i = 0; i < pixelCount; i++)
+		{
+			pixels[i] = (unsigned int)(0.5 + stackedPixels[i] / stackedFrames);
+		}
+
+		if (!isSlidingIntegration)
+		{
+			// Overwrite exposure and timestamps for non-sliding integration;
+			frameInfo->EndTicksLo = frameInfoNext.EndTicksLo;
+			frameInfo->EndTicksHi = frameInfoNext.EndTicksHi;
+		
+			__int64 systemTimestampStart = (((__int64)frameInfo->SystemTimestampHi) << 32) + (__int64)frameInfo->SystemTimestampLo;
+			__int64 systemTimestampEnd = (((__int64)frameInfoNext.SystemTimestampHi) << 32) + (__int64)frameInfoNext.SystemTimestampLo;
+			__int64 systemTimestamp = (systemTimestampStart + systemTimestampEnd) / 2;
+			frameInfo->SystemTimestampLo = systemTimestamp & 0xFFFFFFFF;
+			frameInfo->SystemTimestampHi = (systemTimestamp >> 32) & 0xFFFFFFFF;
+
+			__int64 utcMidExposureTimestampStart = (((__int64)frameInfo->UtcMidExposureTimestampHi) << 32) + (__int64)frameInfo->UtcMidExposureTimestampLo;
+			__int64 utcMidExposureTimestampEnd = (((__int64)frameInfoNext.UtcMidExposureTimestampHi) << 32) + (__int64)frameInfoNext.UtcMidExposureTimestampLo;
+			__int64 utcMidExposureTimestamp = (utcMidExposureTimestampStart + utcMidExposureTimestampEnd) / 2;
+			frameInfo->UtcMidExposureTimestampLo = utcMidExposureTimestamp & (0xFFFFFFFF);
+			frameInfo->UtcMidExposureTimestampHi = (utcMidExposureTimestamp >> 32) & (0xFFFFFFFF);
+			frameInfo->Exposure = (int)(utcMidExposureTimestampEnd - (frameInfoNext.Exposure / 2) - (utcMidExposureTimestampStart - (frameInfo->Exposure / 2)));
+		}
+	}
+
+	delete stackedPixels;
+	return rv;
 }
 
 ADVRESULT AdvVer2_GetTagPairSizes(TagPairType tagPairType, int tagId, int* tagNameSize, int* tagValueSize)
