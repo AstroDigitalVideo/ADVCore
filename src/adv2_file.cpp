@@ -1012,7 +1012,7 @@ ADVRESULT Adv2File::GetFrameSectionData(int streamId, int frameId, unsigned int*
 
 ADVRESULT Adv2File::GetMainStreamTag(int tagId, char* tagName, char* tagValue)
 {
-	if (tagId < 0 || tagId >= m_MainStreamTags.size())
+	if (tagId < 0 || tagId >= (int)m_MainStreamTags.size())
 		return E_FAIL;
 
 	map<string, string>::iterator iter = m_MainStreamTags.begin();
@@ -1026,7 +1026,7 @@ ADVRESULT Adv2File::GetMainStreamTag(int tagId, char* tagName, char* tagValue)
 
 ADVRESULT Adv2File::GetMainStreamTagSizes(int tagId, int* tagNameSize, int* tagValueSize)
 {
-	if (tagId < 0 || tagId >= m_MainStreamTags.size())
+	if (tagId < 0 || tagId >= (int)m_MainStreamTags.size())
 		return E_FAIL;
 
 	map<string, string>::iterator iter = m_MainStreamTags.begin();
@@ -1040,7 +1040,7 @@ ADVRESULT Adv2File::GetMainStreamTagSizes(int tagId, int* tagNameSize, int* tagV
 
 ADVRESULT Adv2File::GetCalibrationStreamTagSizes(int tagId, int* tagNameSize, int* tagValueSize)
 {
-	if (tagId < 0 || tagId >= m_CalibrationStreamTags.size())
+	if (tagId < 0 || tagId >= (int)m_CalibrationStreamTags.size())
 		return E_FAIL;
 
 	map<string, string>::iterator iter = m_CalibrationStreamTags.begin();
@@ -1054,7 +1054,7 @@ ADVRESULT Adv2File::GetCalibrationStreamTagSizes(int tagId, int* tagNameSize, in
 
 ADVRESULT Adv2File::GetCalibrationStreamTag(int tagId, char* tagName, char* tagValue)
 {
-	if (tagId < 0 || tagId >= m_CalibrationStreamTags.size())
+	if (tagId < 0 || tagId >= (int)m_CalibrationStreamTags.size())
 		return E_FAIL;
 
 	map<string, string>::iterator iter = m_CalibrationStreamTags.begin();
@@ -1068,7 +1068,7 @@ ADVRESULT Adv2File::GetCalibrationStreamTag(int tagId, char* tagName, char* tagV
 
 ADVRESULT Adv2File::GetSystemMetadataTagSizes(int tagId, int* tagNameSize, int* tagValueSize)
 {
-	if (tagId < 0 || tagId >= m_FileTags.size())
+	if (tagId < 0 || tagId >= (int)m_FileTags.size())
 		return E_FAIL;
 
 	map<string, string>::iterator iter = m_FileTags.begin();
@@ -1082,7 +1082,7 @@ ADVRESULT Adv2File::GetSystemMetadataTagSizes(int tagId, int* tagNameSize, int* 
 
 ADVRESULT Adv2File::GetSystemMetadataTag(int tagId, char* tagName, char* tagValue)
 {
-	if (tagId < 0 || tagId >= m_FileTags.size())
+	if (tagId < 0 || tagId >= (int)m_FileTags.size())
 		return E_FAIL;
 
 	map<string, string>::iterator iter = m_FileTags.begin();
@@ -1096,7 +1096,7 @@ ADVRESULT Adv2File::GetSystemMetadataTag(int tagId, char* tagName, char* tagValu
 
 ADVRESULT Adv2File::GetUserMetadataTagSizes(int tagId, int* tagNameSize, int* tagValueSize)
 {
-	if (tagId < 0 || tagId >= m_UserMetadataTags.size())
+	if (tagId < 0 || tagId >= (int)m_UserMetadataTags.size())
 		return E_FAIL;
 
 	map<string, string>::iterator iter = m_UserMetadataTags.begin();
@@ -1110,7 +1110,7 @@ ADVRESULT Adv2File::GetUserMetadataTagSizes(int tagId, int* tagNameSize, int* ta
 
 ADVRESULT Adv2File::GetUserMetadataTag(int tagId, char* tagName, char* tagValue)
 {
-	if (tagId < 0 || tagId >= m_UserMetadataTags.size())
+	if (tagId < 0 || tagId >= (int)m_UserMetadataTags.size())
 		return E_FAIL;
 
 	map<string, string>::iterator iter = m_UserMetadataTags.begin();

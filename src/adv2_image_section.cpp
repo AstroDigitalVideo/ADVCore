@@ -314,7 +314,7 @@ int Adv2ImageSection::GetDataFromDataBytes(unsigned char* data, unsigned int* pi
 
 ADVRESULT Adv2ImageSection::GetImageSectionTagSizes(int tagId, int* tagNameSize, int* tagValueSize)
 {
-	if (tagId < 0 || tagId >= m_ImageTags.size())
+	if (tagId < 0 || tagId >= (int)m_ImageTags.size())
 		return E_FAIL;
 
 	map<string, string>::iterator iter = m_ImageTags.begin();
@@ -339,7 +339,7 @@ ADVRESULT Adv2ImageSection::GetImageLayoutTagSizes(int layoutId, int tagId, int*
 
 ADVRESULT Adv2ImageSection::GetImageLayoutInfo(int layoutIndex, AdvLib2::AdvImageLayoutInfo* imageLayoutInfo)
 {
-	if (layoutIndex < 0 || layoutIndex >= m_ImageLayouts.size())
+	if (layoutIndex < 0 || layoutIndex >= (int)m_ImageLayouts.size())
 		return E_FAIL;
 
 	map<unsigned char, Adv2ImageLayout*>::iterator it = m_ImageLayouts.begin();
@@ -353,7 +353,7 @@ ADVRESULT Adv2ImageSection::GetImageLayoutInfo(int layoutIndex, AdvLib2::AdvImag
 
 ADVRESULT Adv2ImageSection::GetImageSectionTag(int tagId, char* tagName, char* tagValue)
 {
-	if (tagId < 0 || tagId >= m_ImageTags.size())
+	if (tagId < 0 || tagId >= (int)m_ImageTags.size())
 		return E_FAIL;
 
 	map<string, string>::iterator iter = m_ImageTags.begin();

@@ -121,7 +121,7 @@ void Adv2ImageLayout::InitialiseBuffers()
 	}
 	else if (Bpp == 12)
 	{
-		MaxFrameBufferSize	= (Width * Height * 3 / 2) + 1 + 4 + 2 * ((Width * Height) % 2) + 16;
+		MaxFrameBufferSize	= (int)ceil(Width * Height * 3 / 2.0) + 1 + 4 + 2 * ((Width * Height) % 2) + 16;
 	}
 	else if (Bpp == 16)
 	{
@@ -332,11 +332,22 @@ void Adv2ImageLayout::GetDataBytesConvertTo12BitPacked(unsigned short* pixels, u
 	unsigned int bytesCounter = *bytesCount;
 	unsigned short* pPixels = pixels;
 	
-	int pixel2GroupCount = Height * Width / 2;
+	int totalPixels = Height * Width;
+	int pixel2GroupCount = (int)ceil(totalPixels / 2.0);
+	int encodedPixels = 0;
+
 	for (int idx = 0; idx < pixel2GroupCount; ++idx)
 	{
-		unsigned short p1 = *pPixels;pPixels++;
-		unsigned short p2 = *pPixels;pPixels++;
+		unsigned short p1 = 0;
+		unsigned short p2 = 0;
+		if (encodedPixels < totalPixels)
+		{
+			p1 = *pPixels; pPixels++; encodedPixels++;
+		}
+		if (encodedPixels < totalPixels)
+		{
+			p2 = *pPixels; pPixels++; encodedPixels++;
+		}
 
 		m_PixelArrayBuffer[3 * idx] = (p1 >> 4) & 0xFF;
 		m_PixelArrayBuffer[3 * idx + 1] = ((p1 << 4) & 0xF0) + ((p2 >> 8) & 0x0F);
@@ -516,7 +527,10 @@ void Adv2ImageLayout::GetPixelsFrom16BitByteArrayRawLayout(unsigned char* layout
 
 void Adv2ImageLayout::GetPixelsFrom12BitByteArray(unsigned char* layoutData, unsigned int* pixelsOut, int* readIndex, bool* crcOkay)
 {
-	int doubleByteCount = Height * Width / 2;
+	int totalOutputPixels = Height * Width;
+	int doubleByteCount = (int)ceil(totalOutputPixels / 2.0);
+	int outputPixels = 0;
+
 	for (int counter = 0; counter < doubleByteCount; ++counter)
 	{
 		// Every 2 12-bit values are be encoded in 3 bytes
@@ -529,8 +543,14 @@ void Adv2ImageLayout::GetPixelsFrom12BitByteArray(unsigned char* layoutData, uns
 		unsigned short val1 = (unsigned short)(((unsigned short)bt1 << 4) + ((bt2 >> 4) & 0x0F));
 		unsigned short val2 = (unsigned short)((((unsigned short)bt2 & 0x0F) << 8) + bt3);
 
-		*pixelsOut = val1; pixelsOut++;
-		*pixelsOut = val2; pixelsOut++;
+		if (outputPixels < totalOutputPixels)
+		{
+			*pixelsOut = val1; pixelsOut++; outputPixels++;
+		}
+		if (outputPixels < totalOutputPixels)
+		{
+			*pixelsOut = val2; pixelsOut++; outputPixels++;
+		}
 	}
 
 	if (m_ImageSection->UsesCRC)
@@ -634,7 +654,10 @@ void Adv2ImageLayout::GetRoiPixelsFrom16BitByteArrayRawLayout(RoiDefinition roiD
 void Adv2ImageLayout::GetRoiPixelsFrom12BitByteArray(RoiDefinition roiDef, unsigned char*& layoutData, unsigned int* pixelsOut, int* readIndex, bool* crcOkay)
 {
 	unsigned int* pPixelsOut = pixelsOut + roiDef.Top * Width + roiDef.Left;
-	int doubleByteCount = roiDef.Height * roiDef.Width / 2;
+
+	int totalOutputPixels = roiDef.Height * roiDef.Width;
+	int doubleByteCount = (int)ceil(totalOutputPixels / 2.0);
+	int outputPixels = 0;
 	unsigned int x = 0;
 
 	for (int counter = 0; counter < doubleByteCount; ++counter)
@@ -649,7 +672,11 @@ void Adv2ImageLayout::GetRoiPixelsFrom12BitByteArray(RoiDefinition roiDef, unsig
 		unsigned short val1 = (unsigned short)(((unsigned short)bt1 << 4) + ((bt2 >> 4) & 0x0F));
 		unsigned short val2 = (unsigned short)((((unsigned short)bt2 & 0x0F) << 8) + bt3);
 
-		*pPixelsOut = val1; pPixelsOut++;
+		if (outputPixels < totalOutputPixels)
+		{
+			*pPixelsOut = val1; pPixelsOut++; outputPixels++;
+		}
+
 		x++;
 		if (x == roiDef.Width)
 		{
@@ -657,7 +684,11 @@ void Adv2ImageLayout::GetRoiPixelsFrom12BitByteArray(RoiDefinition roiDef, unsig
 			x = 0;
 		}
 
-		*pPixelsOut = val2; pPixelsOut++;
+		if (outputPixels < totalOutputPixels)
+		{
+			*pPixelsOut = val2; pPixelsOut++; outputPixels++;
+		}
+
 		x++;
 		if (x == roiDef.Width)
 		{
@@ -690,7 +721,7 @@ ADVRESULT Adv2ImageLayout::GetImageLayoutInfo(AdvLib2::AdvImageLayoutInfo* image
 
 ADVRESULT Adv2ImageLayout::GetImageLayoutTagSizes(int tagId, int* tagNameSize, int* tagValueSize)
 {
-	if (tagId < 0 || tagId >= m_LayoutTags.size())
+	if (tagId < 0 || tagId >= (int)m_LayoutTags.size())
 		return E_FAIL;
 
 	map<string, string>::iterator iter = m_LayoutTags.begin();
@@ -705,7 +736,7 @@ ADVRESULT Adv2ImageLayout::GetImageLayoutTagSizes(int tagId, int* tagNameSize, i
 
 ADVRESULT Adv2ImageLayout::GetImageLayoutTag(int tagId, char* tagName, char* tagValue)
 {
-	if (tagId < 0 || tagId >= m_LayoutTags.size())
+	if (tagId < 0 || tagId >= (int)m_LayoutTags.size())
 		return E_FAIL;
 
 	map<string, string>::iterator iter = m_LayoutTags.begin();
